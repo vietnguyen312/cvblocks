@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../models/cv_data.dart';
 import 'html_editor_field.dart';
 
@@ -20,6 +21,9 @@ class _CvFormState extends State<CvForm> {
   late TextEditingController _locationController;
   late TextEditingController _skillsController;
 
+  late CvData _localData;
+  Timer? _debounceTimer;
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +33,7 @@ class _CvFormState extends State<CvForm> {
     _phoneController = TextEditingController(text: widget.data.phone);
     _locationController = TextEditingController(text: widget.data.location);
     _skillsController = TextEditingController(text: widget.data.skills.join(", "));
+    _localData = widget.data; // Initialize local state
 
     // Listeners to update data
     void update() {
@@ -38,15 +43,15 @@ class _CvFormState extends State<CvForm> {
         email: _emailController.text,
         phone: _phoneController.text,
         location: _locationController.text,
-        about: widget.data.about, // about is updated directly via onChanged callback
+        about: _localData.about,
         skills: _skillsController.text
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList(),
-        experience: widget.data.experience, // Keep existing experience for now
+        experience: _localData.experience,
       );
-      widget.onChanged(newData);
+      _updateLocalData(newData);
     }
 
     _nameController.addListener(update);
@@ -58,6 +63,35 @@ class _CvFormState extends State<CvForm> {
   }
 
   @override
+  void didUpdateWidget(CvForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If parent passes new data (e.g. from JSON import), force sync local state
+    // We check if it is different object to avoid resetting on self-triggered updates if using ValueKey logic upstream
+    if (widget.data != oldWidget.data) {
+      setState(() {
+        _localData = widget.data;
+        _nameController.text = _localData.name;
+        _titleController.text = _localData.jobTitle;
+        _emailController.text = _localData.email;
+        _phoneController.text = _localData.phone;
+        _locationController.text = _localData.location;
+        _skillsController.text = _localData.skills.join(", ");
+      });
+    }
+  }
+
+  void _updateLocalData(CvData newData) {
+    setState(() {
+      _localData = newData;
+    });
+
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      widget.onChanged(_localData);
+    });
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _titleController.dispose();
@@ -65,6 +99,7 @@ class _CvFormState extends State<CvForm> {
     _phoneController.dispose();
     _locationController.dispose();
     _skillsController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
@@ -75,96 +110,134 @@ class _CvFormState extends State<CvForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Personal Information",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildTextField("Full Name", _nameController),
-          _buildTextField("Job Title", _titleController),
-          _buildTextField("Email", _emailController),
-          _buildTextField("Phone", _phoneController),
-          _buildTextField("Location", _locationController),
-          HtmlEditorField(
-            label: "About Me",
-            initialValue: widget.data.about,
-            onChanged: (v) {
-              // Update data directly since controller is local to HtmlEditorField
-              final newData = CvData(
-                name: _nameController.text,
-                jobTitle: _titleController.text,
-                email: _emailController.text,
-                phone: _phoneController.text,
-                location: _locationController.text,
-                about: v,
-                skills: widget.data.skills,
-                experience: widget.data.experience,
-              );
-              widget.onChanged(newData);
-            },
-            maxLines: 10,
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            "Skills (comma separated)",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildTextField("Skills", _skillsController, hint: "Audit, Accounting, Finance"),
-
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ExpansionTile(
+            title: const Text(
+              "Personal Information",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            initiallyExpanded: true, // Open by default
             children: [
-              const Text(
-                "Work Experience",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              IconButton(onPressed: _addExperience, icon: const Icon(Icons.add_circle)),
-            ],
-          ),
-          ...widget.data.experience.asMap().entries.map((entry) {
-            int idx = entry.key;
-            WorkExperience exp = entry.value;
-            return Card(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Column(
                   children: [
-                    TextFormField(
-                      initialValue: exp.company,
-                      decoration: const InputDecoration(labelText: "Company"),
-                      onChanged: (v) => _updateExperience(idx, exp..company = v),
-                    ),
-                    TextFormField(
-                      initialValue: exp.title,
-                      decoration: const InputDecoration(labelText: "Job Title"),
-                      onChanged: (v) => _updateExperience(idx, exp..title = v),
-                    ),
-                    TextFormField(
-                      initialValue: exp.dateRange,
-                      decoration: const InputDecoration(labelText: "Date Range"),
-                      onChanged: (v) => _updateExperience(idx, exp..dateRange = v),
-                    ),
+                    _buildTextField("Full Name", _nameController),
+                    _buildTextField("Job Title", _titleController),
+                    _buildTextField("Email", _emailController),
+                    _buildTextField("Phone", _phoneController),
+                    _buildTextField("Location", _locationController),
                     HtmlEditorField(
-                      label: "Description",
-                      initialValue: exp.description,
-                      maxLines: 15,
-                      onChanged: (v) => _updateExperience(idx, exp..description = v),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => _removeExperience(idx),
-                        child: const Text("Remove", style: TextStyle(color: Colors.red)),
-                      ),
+                      label: "About Me",
+                      initialValue: _localData.about,
+                      onChanged: (v) {
+                        final newData = CvData(
+                          name: _nameController.text,
+                          jobTitle: _titleController.text,
+                          email: _emailController.text,
+                          phone: _phoneController.text,
+                          location: _locationController.text,
+                          about: v,
+                          skills: _localData.skills,
+                          experience: _localData.experience,
+                        );
+                        _updateLocalData(newData);
+                      },
+                      maxLines: 10,
                     ),
                   ],
                 ),
               ),
-            );
-          }),
+            ],
+          ),
+
+          ExpansionTile(
+            title: const Text(
+              "Skills",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  children: [
+                    const Text("Comma separated list of skills"),
+                    const SizedBox(height: 8),
+                    _buildTextField(
+                      "Skills",
+                      _skillsController,
+                      hint: "Audit, Accounting, Finance",
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          ExpansionTile(
+            title: const Text(
+              "Work Experience",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        onPressed: _addExperience,
+                        icon: const Icon(Icons.add),
+                        label: const Text("Add Position"),
+                      ),
+                    ),
+                    ...widget.data.experience.asMap().entries.map((entry) {
+                      int idx = entry.key;
+                      WorkExperience exp = entry.value;
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                initialValue: exp.company,
+                                decoration: const InputDecoration(labelText: "Company"),
+                                onChanged: (v) => _updateExperience(idx, exp..company = v),
+                              ),
+                              TextFormField(
+                                initialValue: exp.title,
+                                decoration: const InputDecoration(labelText: "Job Title"),
+                                onChanged: (v) => _updateExperience(idx, exp..title = v),
+                              ),
+                              TextFormField(
+                                initialValue: exp.dateRange,
+                                decoration: const InputDecoration(labelText: "Date Range"),
+                                onChanged: (v) => _updateExperience(idx, exp..dateRange = v),
+                              ),
+                              HtmlEditorField(
+                                label: "Description",
+                                initialValue: exp.description,
+                                maxLines: 15,
+                                onChanged: (v) => _updateExperience(idx, exp..description = v),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () => _removeExperience(idx),
+                                  child: const Text("Remove", style: TextStyle(color: Colors.red)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -199,59 +272,51 @@ class _CvFormState extends State<CvForm> {
       description: "Description...",
     );
     final newData = CvData(
-      name: widget.data.name,
-      jobTitle: widget.data.jobTitle,
-      email: widget.data.email,
-      phone: widget.data.phone,
-      location: widget.data.location,
-      about: widget.data.about,
-      skills: widget.data.skills,
-      experience: [...widget.data.experience, newExp],
+      name: _localData.name,
+      jobTitle: _localData.jobTitle,
+      email: _localData.email,
+      phone: _localData.phone,
+      location: _localData.location,
+      about: _localData.about,
+      skills: _localData.skills,
+      experience: [..._localData.experience, newExp],
     );
-    widget.onChanged(newData);
-    // Force rebuild to show new item if parent doesn't rebuild entire widget tree immediately
-    // (depending on how parent handles it, but usually calling setState in parent will rebuild this widget).
-    // However, since we use controllers for text fields that are initialized in initState,
-    // simply rebuilding this widget won't update the text fields if the Key doesn't change.
-    // For this simple example, we rely on the parent to rebuild us, but the text controllers won't sync
-    // back if we aren't careful.
-    // Actually, for the main fields, controllers hold the state.
-    // For experience list, it's mapped from widget.data.
-    setState(() {});
+    _updateLocalData(newData);
+    // Explicitly rebuild locally is handled by _updateLocalData's setState
   }
 
   void _updateExperience(int index, WorkExperience updatedExp) {
-    final List<WorkExperience> newInfo = List.from(widget.data.experience);
+    // Ensure we don't mutate the list in place if it's shared, but here we replace the list
+    final List<WorkExperience> newInfo = List.from(_localData.experience);
     newInfo[index] = updatedExp;
 
     final newData = CvData(
-      name: widget.data.name,
-      jobTitle: widget.data.jobTitle,
-      email: widget.data.email,
-      phone: widget.data.phone,
-      location: widget.data.location,
-      about: widget.data.about,
-      skills: widget.data.skills,
+      name: _localData.name,
+      jobTitle: _localData.jobTitle,
+      email: _localData.email,
+      phone: _localData.phone,
+      location: _localData.location,
+      about: _localData.about,
+      skills: _localData.skills,
       experience: newInfo,
     );
-    widget.onChanged(newData);
+    _updateLocalData(newData);
   }
 
   void _removeExperience(int index) {
-    final List<WorkExperience> newInfo = List.from(widget.data.experience);
+    final List<WorkExperience> newInfo = List.from(_localData.experience);
     newInfo.removeAt(index);
 
     final newData = CvData(
-      name: widget.data.name,
-      jobTitle: widget.data.jobTitle,
-      email: widget.data.email,
-      phone: widget.data.phone,
-      location: widget.data.location,
-      about: widget.data.about,
-      skills: widget.data.skills,
+      name: _localData.name,
+      jobTitle: _localData.jobTitle,
+      email: _localData.email,
+      phone: _localData.phone,
+      location: _localData.location,
+      about: _localData.about,
+      skills: _localData.skills,
       experience: newInfo,
     );
-    widget.onChanged(newData);
-    setState(() {});
+    _updateLocalData(newData);
   }
 }
