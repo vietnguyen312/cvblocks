@@ -20,6 +20,7 @@ class _CvFormState extends State<CvForm> {
   late TextEditingController _phoneController;
 
   late TextEditingController _locationController;
+
   late TextEditingController _websiteController;
 
   late CvData _localData;
@@ -46,6 +47,7 @@ class _CvFormState extends State<CvForm> {
         location: _locationController.text,
         contactAdditionalInformation: _websiteController.text,
         about: _localData.about,
+        skills: _localData.skills,
         education: _localData.education,
         experience: _localData.experience,
       );
@@ -149,6 +151,7 @@ class _CvFormState extends State<CvForm> {
                           location: _locationController.text,
                           contactAdditionalInformation: _websiteController.text,
                           about: v,
+                          skills: _localData.skills,
 
                           education: _localData.education,
                           experience: _localData.experience,
@@ -162,7 +165,37 @@ class _CvFormState extends State<CvForm> {
               ),
             ],
           ),
-
+          ExpansionTile(
+            title: const Text(
+              "Skills",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: HtmlEditorField(
+                  label: "Skills",
+                  initialValue: _localData.skills,
+                  maxLines: 10,
+                  onChanged: (v) {
+                    final newData = CvData(
+                      name: _localData.name,
+                      jobTitle: _localData.jobTitle,
+                      email: _localData.email,
+                      phone: _localData.phone,
+                      location: _localData.location,
+                      contactAdditionalInformation: _localData.contactAdditionalInformation,
+                      about: _localData.about,
+                      skills: v,
+                      education: _localData.education,
+                      experience: _localData.experience,
+                    );
+                    _updateLocalData(newData);
+                  },
+                ),
+              ),
+            ],
+          ),
           ExpansionTile(
             title: const Text(
               "Work Experience",
@@ -334,6 +367,7 @@ class _CvFormState extends State<CvForm> {
       location: _localData.location,
       contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
+      skills: _localData.skills,
       education: _localData.education,
       experience: [..._localData.experience, newExp],
     );
@@ -354,6 +388,7 @@ class _CvFormState extends State<CvForm> {
       location: _localData.location,
       contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
+      skills: _localData.skills,
       education: _localData.education,
       experience: newInfo,
     );
@@ -372,6 +407,7 @@ class _CvFormState extends State<CvForm> {
       location: _localData.location,
       contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
+      skills: _localData.skills,
       education: _localData.education,
       experience: newInfo,
     );
@@ -393,6 +429,7 @@ class _CvFormState extends State<CvForm> {
       location: _localData.location,
       contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
+      skills: _localData.skills,
       education: [..._localData.education, newEdu],
       experience: _localData.experience,
     );
@@ -412,6 +449,7 @@ class _CvFormState extends State<CvForm> {
       location: _localData.location,
       contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
+      skills: _localData.skills,
       education: newInfo,
       experience: _localData.experience,
     );
@@ -430,6 +468,7 @@ class _CvFormState extends State<CvForm> {
       location: _localData.location,
       contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
+      skills: _localData.skills,
       education: newInfo,
       experience: _localData.experience,
     );
