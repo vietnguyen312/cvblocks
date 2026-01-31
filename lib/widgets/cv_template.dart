@@ -17,25 +17,16 @@ class CvTemplate extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF6200EE), width: 3.0),
-                ),
-                child: Text(
-                  data.name.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    letterSpacing: 1.2,
-                  ),
+              child: Text(
+                data.name.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  letterSpacing: 1.2,
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-
-            // Job Title
             Center(
               child: Text(
                 data.jobTitle,
@@ -47,8 +38,6 @@ class CvTemplate extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-
-            // Contact Info
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -59,11 +48,9 @@ class CvTemplate extends StatelessWidget {
                 _buildContactItem(Icons.location_on, data.location),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             const Divider(color: Colors.black54, thickness: 1),
-            const SizedBox(height: 16),
-
-            // About Me
+            const SizedBox(height: 8),
             _buildSectionHeader("ABOUT ME"),
             const SizedBox(height: 8),
             HtmlWidget(
@@ -71,20 +58,16 @@ class CvTemplate extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 14, height: 1.5, color: Colors.black87),
             ),
             const SizedBox(height: 16),
-            const Divider(color: Colors.black12, thickness: 1),
+            const Divider(color: Colors.black54, thickness: 1),
             const SizedBox(height: 16),
             _buildSectionHeader("WORK EXPERIENCE"),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             ...data.experience.map((exp) => _buildExperienceItem(exp)),
-
             if (data.experience.isEmpty)
               const Text("No work experience added.", style: TextStyle(color: Colors.grey)),
-
             const SizedBox(height: 16),
             const Divider(color: Colors.black54, thickness: 1),
             const SizedBox(height: 16),
-
-            // Skills
             _buildSectionHeader("SKILLS"),
             const SizedBox(height: 12),
             Wrap(
@@ -113,7 +96,7 @@ class CvTemplate extends StatelessWidget {
     return Text(
       title.toUpperCase(),
       style: const TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: FontWeight.bold,
         letterSpacing: 1.5,
         color: Colors.black,
