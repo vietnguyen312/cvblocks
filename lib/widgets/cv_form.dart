@@ -109,6 +109,7 @@ class _CvFormState extends State<CvForm> {
             "Skills (comma separated)",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 16),
           _buildTextField("Skills", _skillsController, hint: "Audit, Accounting, Finance"),
 
           const SizedBox(height: 24),
