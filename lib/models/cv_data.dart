@@ -19,6 +19,34 @@ class CvData {
     this.experience = const [],
     this.skills = const ["Auditing", "Financial Accounting", "Financial Reporting"],
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'jobTitle': jobTitle,
+      'email': email,
+      'phone': phone,
+      'location': location,
+      'about': about,
+      'experience': experience.map((e) => e.toJson()).toList(),
+      'skills': skills,
+    };
+  }
+
+  factory CvData.fromJson(Map<String, dynamic> json) {
+    return CvData(
+      name: json['name'] ?? "",
+      jobTitle: json['jobTitle'] ?? "",
+      email: json['email'] ?? "",
+      phone: json['phone'] ?? "",
+      location: json['location'] ?? "",
+      about: json['about'] ?? "",
+      experience:
+          (json['experience'] as List<dynamic>?)?.map((e) => WorkExperience.fromJson(e)).toList() ??
+          [],
+      skills: (json['skills'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+    );
+  }
 }
 
 class WorkExperience {
@@ -33,4 +61,17 @@ class WorkExperience {
     required this.dateRange,
     required this.description,
   });
+
+  Map<String, dynamic> toJson() {
+    return {'title': title, 'company': company, 'dateRange': dateRange, 'description': description};
+  }
+
+  factory WorkExperience.fromJson(Map<String, dynamic> json) {
+    return WorkExperience(
+      title: json['title'] ?? "",
+      company: json['company'] ?? "",
+      dateRange: json['dateRange'] ?? "",
+      description: json['description'] ?? "",
+    );
+  }
 }
