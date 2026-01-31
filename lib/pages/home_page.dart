@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   CvData _data = CvData();
+  int _dataVersion = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             color: Colors.grey[50],
             child: CvForm(
-              key: ValueKey(_data), // Force rebuild when data changes
+              key: ValueKey(_dataVersion), // Rebuild only on import/reset
               data: _data,
               onChanged: (newData) {
                 setState(() {
@@ -108,7 +109,7 @@ class _HomePageState extends State<HomePage> {
             child: TabBarView(
               children: [
                 CvForm(
-                  key: ValueKey(_data),
+                  key: ValueKey(_dataVersion),
                   data: _data,
                   onChanged: (newData) {
                     setState(() {
@@ -159,6 +160,7 @@ class _HomePageState extends State<HomePage> {
         final jsonData = jsonDecode(content);
         setState(() {
           _data = CvData.fromJson(jsonData);
+          _dataVersion++; // Increment version to force form rebuild
         });
 
         if (mounted) {
