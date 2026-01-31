@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/cv_data.dart';
 import '../widgets/cv_form.dart';
 import '../widgets/cv_template.dart';
+import '../utils/pdf_generator.dart';
+import 'package:printing/printing.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,10 +28,9 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
-            onPressed: () {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text("PDF Export feature coming soon!")));
+            onPressed: () async {
+              final pdfBytes = await PdfGenerator.generate(_data);
+              await Printing.sharePdf(bytes: pdfBytes, filename: 'my_cv.pdf');
             },
             tooltip: "Export PDF",
           ),
