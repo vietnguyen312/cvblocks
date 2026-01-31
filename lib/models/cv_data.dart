@@ -9,15 +9,14 @@ class CvData {
   List<String> skills;
 
   CvData({
-    this.name = "VIET NGUYEN NGUYEN",
-    this.jobTitle = "Senior mobile engineer",
-    this.email = "nguyenvietnguyen88@gmail.com",
-    this.phone = "+84 392734512",
-    this.location = "Ho Chi Minh city, Vietnam",
-    this.about =
-        "Senior Mobile Engineer with <b>14+ years of experience</b> building and scaling mobile applications using <i>Flutter</i> and native Android...",
+    this.name = "",
+    this.jobTitle = "",
+    this.email = "",
+    this.phone = "",
+    this.location = "",
+    this.about = "",
     this.experience = const [],
-    this.skills = const ["Auditing", "Financial Accounting", "Financial Reporting"],
+    this.skills = const [],
   });
 
   Map<String, dynamic> toJson() {
