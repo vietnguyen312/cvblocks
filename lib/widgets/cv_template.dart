@@ -12,70 +12,68 @@ class CvTemplate extends StatelessWidget {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                data.name.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  letterSpacing: 1.2,
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              data.name.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                letterSpacing: 1.2,
               ),
             ),
-            Center(
-              child: Text(
-                data.jobTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black87,
-                ),
+          ),
+          Center(
+            child: Text(
+              data.jobTitle,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w400,
+                color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildContactItem(Icons.phone, data.phone),
-                const SizedBox(width: 24),
-                _buildContactItem(Icons.email, data.email),
-                const SizedBox(width: 24),
-                _buildContactItem(Icons.location_on, data.location),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Divider(color: Colors.black54, thickness: 1),
-            const SizedBox(height: 8),
-            _buildSectionHeader("ABOUT ME"),
-            const SizedBox(height: 8),
-            HtmlWidget(
-              data.about,
-              textStyle: const TextStyle(fontSize: 14, height: 1.5, color: Colors.black87),
-            ),
-            const SizedBox(height: 16),
-            const Divider(color: Colors.black54, thickness: 1),
-            const SizedBox(height: 16),
-            _buildSectionHeader("WORK EXPERIENCE"),
-            const SizedBox(height: 16),
-            ...data.experience.map((exp) => _buildExperienceItem(exp)),
-            if (data.experience.isEmpty)
-              const Text("No work experience added.", style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 16),
-            if (data.education.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              const Divider(color: Colors.black54, thickness: 1),
-              const SizedBox(height: 16),
-              _buildSectionHeader("EDUCATION"),
-              const SizedBox(height: 16),
-              ...data.education.map((edu) => _buildEducationItem(edu)),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildContactItem(Icons.phone, data.phone),
+              const SizedBox(width: 24),
+              _buildContactItem(Icons.email, data.email),
+              const SizedBox(width: 24),
+              _buildContactItem(Icons.location_on, data.location),
             ],
+          ),
+          const SizedBox(height: 8),
+          const Divider(color: Colors.black54, thickness: 1),
+          const SizedBox(height: 8),
+          _buildSectionHeader("ABOUT ME"),
+          const SizedBox(height: 8),
+          HtmlWidget(
+            data.about,
+            textStyle: const TextStyle(fontSize: 14, height: 1.5, color: Colors.black87),
+          ),
+          const SizedBox(height: 16),
+          const Divider(color: Colors.black54, thickness: 1),
+          const SizedBox(height: 16),
+          _buildSectionHeader("WORK EXPERIENCE"),
+          const SizedBox(height: 16),
+          ...data.experience.map((exp) => _buildExperienceItem(exp)),
+          if (data.experience.isEmpty)
+            const Text("No work experience added.", style: TextStyle(color: Colors.grey)),
+          const SizedBox(height: 16),
+          if (data.education.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            const Divider(color: Colors.black54, thickness: 1),
+            const SizedBox(height: 16),
+            _buildSectionHeader("EDUCATION"),
+            const SizedBox(height: 16),
+            ...data.education.map((edu) => _buildEducationItem(edu)),
           ],
-        ),
+        ],
       ),
     );
   }

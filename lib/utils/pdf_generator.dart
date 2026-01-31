@@ -38,19 +38,13 @@ class PdfGenerator {
             children: [
               // Name Header
               pw.Center(
-                child: pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.deepPurple, width: 3.0),
-                  ),
-                  child: pw.Text(
-                    data.name.toUpperCase(),
-                    style: pw.TextStyle(
-                      fontSize: 32,
-                      fontWeight: pw.FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: PdfColors.black,
-                    ),
+                child: pw.Text(
+                  data.name.toUpperCase(),
+                  style: pw.TextStyle(
+                    fontSize: 32,
+                    fontWeight: pw.FontWeight.bold,
+                    letterSpacing: 1.2,
+                    color: PdfColors.black,
                   ),
                 ),
               ),
@@ -77,7 +71,7 @@ class PdfGenerator {
                 ],
               ),
               pw.SizedBox(height: 12),
-              pw.Divider(color: PdfColors.black, thickness: 1),
+              pw.Divider(color: PdfColors.grey600, thickness: 1),
               pw.SizedBox(height: 16),
 
               // About Me
@@ -85,7 +79,7 @@ class PdfGenerator {
               pw.SizedBox(height: 8),
               _buildHtmlText(data.about),
               pw.SizedBox(height: 16),
-              pw.Divider(color: PdfColors.grey300, thickness: 1),
+              pw.Divider(color: PdfColors.grey600, thickness: 1),
               pw.SizedBox(height: 16),
 
               // Work Experience
@@ -101,7 +95,7 @@ class PdfGenerator {
 
               if (data.education.isNotEmpty) ...[
                 pw.SizedBox(height: 16),
-                pw.Divider(color: PdfColors.black, thickness: 1),
+                pw.Divider(color: PdfColors.grey600, thickness: 1),
                 pw.SizedBox(height: 16),
 
                 // Education
@@ -129,7 +123,7 @@ class PdfGenerator {
     return pw.Text(
       title.toUpperCase(),
       style: pw.TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: pw.FontWeight.bold,
         letterSpacing: 1.5,
         color: PdfColors.black,
@@ -151,12 +145,12 @@ class PdfGenerator {
                 style: pw.TextStyle(
                   fontWeight: pw.FontWeight.bold,
                   fontSize: 14,
-                  color: PdfColors.grey700,
+                  color: PdfColors.black,
                 ),
               ),
               pw.Text(
                 exp.dateRange,
-                style: const pw.TextStyle(fontSize: 14, color: PdfColors.grey700),
+                style: const pw.TextStyle(fontSize: 14, color: PdfColors.black),
               ),
             ],
           ),
@@ -183,12 +177,12 @@ class PdfGenerator {
                 style: pw.TextStyle(
                   fontWeight: pw.FontWeight.bold,
                   fontSize: 14,
-                  color: PdfColors.grey700,
+                  color: PdfColors.black,
                 ),
               ),
               pw.Text(
                 edu.dateRange,
-                style: const pw.TextStyle(fontSize: 14, color: PdfColors.grey700),
+                style: const pw.TextStyle(fontSize: 14, color: PdfColors.black),
               ),
             ],
           ),

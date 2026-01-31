@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../models/cv_data.dart';
 import '../widgets/cv_form.dart';
 import '../widgets/cv_template.dart';
-import '../utils/pdf_generator.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:printing/printing.dart';
+
+import 'preview_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,12 +38,14 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(icon: const Icon(Icons.save), onPressed: _exportJson, tooltip: "Export JSON"),
           IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: () async {
-              final pdfBytes = await PdfGenerator.generate(_data);
-              await Printing.sharePdf(bytes: pdfBytes, filename: 'my_cv.pdf');
+            icon: const Icon(Icons.print),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => CvPreviewPage(data: _data)),
+              );
             },
-            tooltip: "Export PDF",
+            tooltip: "Preview & Print",
           ),
         ],
       ),
@@ -80,10 +83,7 @@ class _HomePageState extends State<HomePage> {
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
-                  child: AspectRatio(
-                    aspectRatio: 1 / 1.414, // A4 aspect ratio approximation or just auto
-                    child: CvTemplate(data: _data),
-                  ),
+                  child: CvTemplate(data: _data),
                 ),
               ),
             ),
