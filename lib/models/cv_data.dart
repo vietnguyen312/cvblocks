@@ -4,6 +4,7 @@ class CvData {
   String email;
   String phone;
   String location;
+  String contactAdditionalInformation;
   String about;
   List<WorkExperience> experience;
   List<Education> education;
@@ -14,6 +15,7 @@ class CvData {
     this.email = "",
     this.phone = "",
     this.location = "",
+    this.contactAdditionalInformation = "",
     this.about = "",
     this.experience = const [],
     this.education = const [],
@@ -26,6 +28,7 @@ class CvData {
       'email': email,
       'phone': phone,
       'location': location,
+      'website': contactAdditionalInformation,
       'about': about,
       'experience': experience.map((e) => e.toJson()).toList(),
       'education': education.map((e) => e.toJson()).toList(),
@@ -39,6 +42,7 @@ class CvData {
       email: json['email'] ?? "",
       phone: json['phone'] ?? "",
       location: json['location'] ?? "",
+      contactAdditionalInformation: json['website'] ?? "",
       about: json['about'] ?? "",
       experience:
           (json['experience'] as List<dynamic>?)?.map((e) => WorkExperience.fromJson(e)).toList() ??

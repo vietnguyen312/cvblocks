@@ -38,15 +38,17 @@ class CvTemplate extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildContactItem(Icons.phone, data.phone),
-              const SizedBox(width: 24),
-              _buildContactItem(Icons.email, data.email),
-              const SizedBox(width: 24),
-              _buildContactItem(Icons.location_on, data.location),
+              _buildContactItem(text: data.phone, icon: Icons.phone),
+              _buildContactItem(text: data.email, icon: Icons.email),
+              _buildContactItem(text: data.location, icon: Icons.location_on),
             ],
           ),
+          if (data.contactAdditionalInformation.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            _buildContactItem(text: data.contactAdditionalInformation),
+          ],
           const SizedBox(height: 8),
           const Divider(color: Colors.black54, thickness: 1),
           const SizedBox(height: 8),
@@ -78,12 +80,14 @@ class CvTemplate extends StatelessWidget {
     );
   }
 
-  Widget _buildContactItem(IconData icon, String text) {
+  Widget _buildContactItem({required String text, IconData? icon}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: Colors.black87),
-        const SizedBox(width: 8),
+        if (icon != null) ...[
+          Icon(icon, size: 14, color: Colors.black87),
+          const SizedBox(width: 8),
+        ],
         Text(text, style: const TextStyle(fontSize: 12, color: Colors.black87)),
       ],
     );

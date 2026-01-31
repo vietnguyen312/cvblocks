@@ -18,7 +18,9 @@ class _CvFormState extends State<CvForm> {
   late TextEditingController _titleController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
+
   late TextEditingController _locationController;
+  late TextEditingController _websiteController;
 
   late CvData _localData;
   Timer? _debounceTimer;
@@ -31,6 +33,7 @@ class _CvFormState extends State<CvForm> {
     _emailController = TextEditingController(text: widget.data.email);
     _phoneController = TextEditingController(text: widget.data.phone);
     _locationController = TextEditingController(text: widget.data.location);
+    _websiteController = TextEditingController(text: widget.data.contactAdditionalInformation);
     _localData = widget.data; // Initialize local state
 
     // Listeners to update data
@@ -41,6 +44,7 @@ class _CvFormState extends State<CvForm> {
         email: _emailController.text,
         phone: _phoneController.text,
         location: _locationController.text,
+        contactAdditionalInformation: _websiteController.text,
         about: _localData.about,
         education: _localData.education,
         experience: _localData.experience,
@@ -53,6 +57,7 @@ class _CvFormState extends State<CvForm> {
     _emailController.addListener(update);
     _phoneController.addListener(update);
     _locationController.addListener(update);
+    _websiteController.addListener(update);
   }
 
   @override
@@ -68,6 +73,7 @@ class _CvFormState extends State<CvForm> {
         _emailController.text = _localData.email;
         _phoneController.text = _localData.phone;
         _locationController.text = _localData.location;
+        _websiteController.text = _localData.contactAdditionalInformation;
       });
     }
   }
@@ -90,6 +96,7 @@ class _CvFormState extends State<CvForm> {
     _emailController.dispose();
     _phoneController.dispose();
     _locationController.dispose();
+    _websiteController.dispose();
     _debounceTimer?.cancel();
     super.dispose();
   }
@@ -117,6 +124,7 @@ class _CvFormState extends State<CvForm> {
                     _buildTextField("Email", _emailController),
                     _buildTextField("Phone", _phoneController),
                     _buildTextField("Location", _locationController),
+                    _buildTextField("General Information (Visa, etc.)", _websiteController),
                     HtmlEditorField(
                       label: "About Me",
                       initialValue: _localData.about,
@@ -127,6 +135,7 @@ class _CvFormState extends State<CvForm> {
                           email: _emailController.text,
                           phone: _phoneController.text,
                           location: _locationController.text,
+                          contactAdditionalInformation: _websiteController.text,
                           about: v,
 
                           education: _localData.education,
@@ -311,6 +320,7 @@ class _CvFormState extends State<CvForm> {
       email: _localData.email,
       phone: _localData.phone,
       location: _localData.location,
+      contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
       education: _localData.education,
       experience: [..._localData.experience, newExp],
@@ -330,6 +340,7 @@ class _CvFormState extends State<CvForm> {
       email: _localData.email,
       phone: _localData.phone,
       location: _localData.location,
+      contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
       education: _localData.education,
       experience: newInfo,
@@ -347,6 +358,7 @@ class _CvFormState extends State<CvForm> {
       email: _localData.email,
       phone: _localData.phone,
       location: _localData.location,
+      contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
       education: _localData.education,
       experience: newInfo,
@@ -367,6 +379,7 @@ class _CvFormState extends State<CvForm> {
       email: _localData.email,
       phone: _localData.phone,
       location: _localData.location,
+      contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
       education: [..._localData.education, newEdu],
       experience: _localData.experience,
@@ -385,6 +398,7 @@ class _CvFormState extends State<CvForm> {
       email: _localData.email,
       phone: _localData.phone,
       location: _localData.location,
+      contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
       education: newInfo,
       experience: _localData.experience,
@@ -402,6 +416,7 @@ class _CvFormState extends State<CvForm> {
       email: _localData.email,
       phone: _localData.phone,
       location: _localData.location,
+      contactAdditionalInformation: _localData.contactAdditionalInformation,
       about: _localData.about,
       education: newInfo,
       experience: _localData.experience,
