@@ -7,6 +7,6 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     // Verify that our welcome message is displayed.
-    expect(find.text('Welcome to CV Blocks'), findsOneWidget);
+    expect(find.text('CV Builder'), findsOneWidget);
   });
 }
