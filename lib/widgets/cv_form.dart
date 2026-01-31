@@ -68,12 +68,24 @@ class _CvFormState extends State<CvForm> {
     if (widget.data != oldWidget.data) {
       setState(() {
         _localData = widget.data;
-        _nameController.text = _localData.name;
-        _titleController.text = _localData.jobTitle;
-        _emailController.text = _localData.email;
-        _phoneController.text = _localData.phone;
-        _locationController.text = _localData.location;
-        _websiteController.text = _localData.contactAdditionalInformation;
+        if (_nameController.text != _localData.name) {
+          _nameController.text = _localData.name;
+        }
+        if (_titleController.text != _localData.jobTitle) {
+          _titleController.text = _localData.jobTitle;
+        }
+        if (_emailController.text != _localData.email) {
+          _emailController.text = _localData.email;
+        }
+        if (_phoneController.text != _localData.phone) {
+          _phoneController.text = _localData.phone;
+        }
+        if (_locationController.text != _localData.location) {
+          _locationController.text = _localData.location;
+        }
+        if (_websiteController.text != _localData.contactAdditionalInformation) {
+          _websiteController.text = _localData.contactAdditionalInformation;
+        }
       });
     }
   }
