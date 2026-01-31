@@ -6,7 +6,7 @@ class CvData {
   String location;
   String about;
   List<WorkExperience> experience;
-  List<String> skills;
+  List<Education> education;
 
   CvData({
     this.name = "",
@@ -16,7 +16,7 @@ class CvData {
     this.location = "",
     this.about = "",
     this.experience = const [],
-    this.skills = const [],
+    this.education = const [],
   });
 
   Map<String, dynamic> toJson() {
@@ -28,7 +28,7 @@ class CvData {
       'location': location,
       'about': about,
       'experience': experience.map((e) => e.toJson()).toList(),
-      'skills': skills,
+      'education': education.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -43,7 +43,8 @@ class CvData {
       experience:
           (json['experience'] as List<dynamic>?)?.map((e) => WorkExperience.fromJson(e)).toList() ??
           [],
-      skills: (json['skills'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      education:
+          (json['education'] as List<dynamic>?)?.map((e) => Education.fromJson(e)).toList() ?? [],
     );
   }
 }
@@ -69,6 +70,38 @@ class WorkExperience {
     return WorkExperience(
       title: json['title'] ?? "",
       company: json['company'] ?? "",
+      dateRange: json['dateRange'] ?? "",
+      description: json['description'] ?? "",
+    );
+  }
+}
+
+class Education {
+  String institution;
+  String degree;
+  String dateRange;
+  String description;
+
+  Education({
+    required this.institution,
+    required this.degree,
+    required this.dateRange,
+    required this.description,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'institution': institution,
+      'degree': degree,
+      'dateRange': dateRange,
+      'description': description,
+    };
+  }
+
+  factory Education.fromJson(Map<String, dynamic> json) {
+    return Education(
+      institution: json['institution'] ?? "",
+      degree: json['degree'] ?? "",
       dateRange: json['dateRange'] ?? "",
       description: json['description'] ?? "",
     );

@@ -66,15 +66,14 @@ class CvTemplate extends StatelessWidget {
             if (data.experience.isEmpty)
               const Text("No work experience added.", style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 16),
-            const Divider(color: Colors.black54, thickness: 1),
-            const SizedBox(height: 16),
-            _buildSectionHeader("SKILLS"),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 40.0,
-              runSpacing: 12.0,
-              children: data.skills.map((skill) => _buildSkillItem(skill)).toList(),
-            ),
+            if (data.education.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              const Divider(color: Colors.black54, thickness: 1),
+              const SizedBox(height: 16),
+              _buildSectionHeader("EDUCATION"),
+              const SizedBox(height: 16),
+              ...data.education.map((edu) => _buildEducationItem(edu)),
+            ],
           ],
         ),
       ),
@@ -133,14 +132,32 @@ class CvTemplate extends StatelessWidget {
     );
   }
 
-  Widget _buildSkillItem(String skill) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(Icons.circle, size: 6, color: Colors.black87),
-        const SizedBox(width: 8),
-        Text(skill, style: const TextStyle(fontSize: 14)),
-      ],
+  Widget _buildEducationItem(Education edu) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                edu.institution,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              Text(edu.dateRange, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(edu.degree, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 8),
+          HtmlWidget(edu.description, textStyle: const TextStyle(fontSize: 14, height: 1.5)),
+        ],
+      ),
     );
   }
 }

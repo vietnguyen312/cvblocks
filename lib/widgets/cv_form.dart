@@ -19,7 +19,6 @@ class _CvFormState extends State<CvForm> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _locationController;
-  late TextEditingController _skillsController;
 
   late CvData _localData;
   Timer? _debounceTimer;
@@ -32,7 +31,6 @@ class _CvFormState extends State<CvForm> {
     _emailController = TextEditingController(text: widget.data.email);
     _phoneController = TextEditingController(text: widget.data.phone);
     _locationController = TextEditingController(text: widget.data.location);
-    _skillsController = TextEditingController(text: widget.data.skills.join(", "));
     _localData = widget.data; // Initialize local state
 
     // Listeners to update data
@@ -44,11 +42,7 @@ class _CvFormState extends State<CvForm> {
         phone: _phoneController.text,
         location: _locationController.text,
         about: _localData.about,
-        skills: _skillsController.text
-            .split(',')
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList(),
+        education: _localData.education,
         experience: _localData.experience,
       );
       _updateLocalData(newData);
@@ -59,7 +53,6 @@ class _CvFormState extends State<CvForm> {
     _emailController.addListener(update);
     _phoneController.addListener(update);
     _locationController.addListener(update);
-    _skillsController.addListener(update);
   }
 
   @override
@@ -75,7 +68,6 @@ class _CvFormState extends State<CvForm> {
         _emailController.text = _localData.email;
         _phoneController.text = _localData.phone;
         _locationController.text = _localData.location;
-        _skillsController.text = _localData.skills.join(", ");
       });
     }
   }
@@ -98,7 +90,6 @@ class _CvFormState extends State<CvForm> {
     _emailController.dispose();
     _phoneController.dispose();
     _locationController.dispose();
-    _skillsController.dispose();
     _debounceTimer?.cancel();
     super.dispose();
   }
@@ -137,35 +128,13 @@ class _CvFormState extends State<CvForm> {
                           phone: _phoneController.text,
                           location: _locationController.text,
                           about: v,
-                          skills: _localData.skills,
+
+                          education: _localData.education,
                           experience: _localData.experience,
                         );
                         _updateLocalData(newData);
                       },
                       maxLines: 10,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          ExpansionTile(
-            title: const Text(
-              "Skills",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Column(
-                  children: [
-                    const Text("Comma separated list of skills"),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      "Skills",
-                      _skillsController,
-                      hint: "Audit, Accounting, Finance",
                     ),
                   ],
                 ),
@@ -238,6 +207,71 @@ class _CvFormState extends State<CvForm> {
               ),
             ],
           ),
+          ExpansionTile(
+            title: const Text(
+              "Education",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        onPressed: _addEducation,
+                        icon: const Icon(Icons.add),
+                        label: const Text("Add Education"),
+                      ),
+                    ),
+                    ...widget.data.education.asMap().entries.map((entry) {
+                      int idx = entry.key;
+                      Education edu = entry.value;
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                initialValue: edu.institution,
+                                decoration: const InputDecoration(labelText: "Institution"),
+                                onChanged: (v) => _updateEducation(idx, edu..institution = v),
+                              ),
+                              TextFormField(
+                                initialValue: edu.degree,
+                                decoration: const InputDecoration(labelText: "Degree"),
+                                onChanged: (v) => _updateEducation(idx, edu..degree = v),
+                              ),
+                              TextFormField(
+                                initialValue: edu.dateRange,
+                                decoration: const InputDecoration(labelText: "Date Range"),
+                                onChanged: (v) => _updateEducation(idx, edu..dateRange = v),
+                              ),
+                              HtmlEditorField(
+                                label: "Description",
+                                initialValue: edu.description,
+                                maxLines: 5,
+                                onChanged: (v) => _updateEducation(idx, edu..description = v),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () => _removeEducation(idx),
+                                  child: const Text("Remove", style: TextStyle(color: Colors.red)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -278,7 +312,7 @@ class _CvFormState extends State<CvForm> {
       phone: _localData.phone,
       location: _localData.location,
       about: _localData.about,
-      skills: _localData.skills,
+      education: _localData.education,
       experience: [..._localData.experience, newExp],
     );
     _updateLocalData(newData);
@@ -297,7 +331,7 @@ class _CvFormState extends State<CvForm> {
       phone: _localData.phone,
       location: _localData.location,
       about: _localData.about,
-      skills: _localData.skills,
+      education: _localData.education,
       experience: newInfo,
     );
     _updateLocalData(newData);
@@ -314,8 +348,63 @@ class _CvFormState extends State<CvForm> {
       phone: _localData.phone,
       location: _localData.location,
       about: _localData.about,
-      skills: _localData.skills,
+      education: _localData.education,
       experience: newInfo,
+    );
+    _updateLocalData(newData);
+  }
+
+  void _addEducation() {
+    final newEdu = Education(
+      institution: "University",
+      degree: "Bachelor's Degree",
+      dateRange: "2019 - 2023",
+      description: "Description...",
+    );
+    final newData = CvData(
+      name: _localData.name,
+      jobTitle: _localData.jobTitle,
+      email: _localData.email,
+      phone: _localData.phone,
+      location: _localData.location,
+      about: _localData.about,
+      education: [..._localData.education, newEdu],
+      experience: _localData.experience,
+    );
+    _updateLocalData(newData);
+  }
+
+  void _updateEducation(int index, Education updatedEdu) {
+    // Ensure we don't mutate the list in place if it's shared, but here we replace the list
+    final List<Education> newInfo = List.from(_localData.education);
+    newInfo[index] = updatedEdu;
+
+    final newData = CvData(
+      name: _localData.name,
+      jobTitle: _localData.jobTitle,
+      email: _localData.email,
+      phone: _localData.phone,
+      location: _localData.location,
+      about: _localData.about,
+      education: newInfo,
+      experience: _localData.experience,
+    );
+    _updateLocalData(newData);
+  }
+
+  void _removeEducation(int index) {
+    final List<Education> newInfo = List.from(_localData.education);
+    newInfo.removeAt(index);
+
+    final newData = CvData(
+      name: _localData.name,
+      jobTitle: _localData.jobTitle,
+      email: _localData.email,
+      phone: _localData.phone,
+      location: _localData.location,
+      about: _localData.about,
+      education: newInfo,
+      experience: _localData.experience,
     );
     _updateLocalData(newData);
   }

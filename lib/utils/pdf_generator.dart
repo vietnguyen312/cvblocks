@@ -99,18 +99,16 @@ class PdfGenerator {
                   style: const pw.TextStyle(color: PdfColors.grey),
                 ),
 
-              pw.SizedBox(height: 16),
-              pw.Divider(color: PdfColors.black, thickness: 1),
-              pw.SizedBox(height: 16),
+              if (data.education.isNotEmpty) ...[
+                pw.SizedBox(height: 16),
+                pw.Divider(color: PdfColors.black, thickness: 1),
+                pw.SizedBox(height: 16),
 
-              // Skills
-              _buildSectionHeader("SKILLS"),
-              pw.SizedBox(height: 12),
-              pw.Wrap(
-                spacing: 40.0,
-                runSpacing: 12.0,
-                children: data.skills.map((skill) => _buildSkillItem(skill)).toList(),
-              ),
+                // Education
+                _buildSectionHeader("EDUCATION"),
+                pw.SizedBox(height: 12),
+                ...data.education.map((edu) => _buildEducationItem(edu)),
+              ],
             ],
           );
         },
@@ -171,18 +169,35 @@ class PdfGenerator {
     );
   }
 
-  static pw.Widget _buildSkillItem(String skill) {
-    return pw.Row(
-      mainAxisSize: pw.MainAxisSize.min,
-      children: [
-        pw.Container(
-          width: 4,
-          height: 4,
-          decoration: const pw.BoxDecoration(color: PdfColors.black, shape: pw.BoxShape.circle),
-        ),
-        pw.SizedBox(width: 8),
-        pw.Text(skill, style: const pw.TextStyle(fontSize: 14)),
-      ],
+  static pw.Widget _buildEducationItem(Education edu) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 16.0),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                edu.institution,
+                style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 14,
+                  color: PdfColors.grey700,
+                ),
+              ),
+              pw.Text(
+                edu.dateRange,
+                style: const pw.TextStyle(fontSize: 14, color: PdfColors.grey700),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 4),
+          pw.Text(edu.degree, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16)),
+          pw.SizedBox(height: 8),
+          _buildHtmlText(edu.description),
+        ],
+      ),
     );
   }
 
